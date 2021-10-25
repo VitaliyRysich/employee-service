@@ -62,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             var criteria = Arrays.stream(values())
                     .filter(c -> c.getKey().equals(key))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalStateException(
+                    .orElseThrow(() -> new IllegalArgumentException(
                             String.format("Unsupported request param %s.", key)));
 
             criteria.setValue(criteria.getField().equals("grade")
