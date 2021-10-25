@@ -12,8 +12,10 @@ public enum EmployeeSearchCriteria {
     SURNAME("surname","surname" , SearchOperation.EQUAL),
     GRADE("grade","grade", SearchOperation.EQUAL),
     SALARY("salary", "salary", SearchOperation.EQUAL),
-    MIN_SALARY("minSalary", "salary", SearchOperation.GREATER_THAN_EQUAL),
-    MAX_SALARY("maxSalary", "salary", SearchOperation.LESS_THAN_EQUAL);
+    GREATER_SALARY("greaterSalary", "salary", SearchOperation.GREATER_THAN_EQUAL),
+    LESS_SALARY("lessSalary", "salary", SearchOperation.LESS_THAN_EQUAL),
+    MATCH_NAME("matchName", "name", SearchOperation.MATCH),
+    MATCH_SURNAME("matchSurname", "surname", SearchOperation.MATCH);
 
     private final String key;
     private final String field;

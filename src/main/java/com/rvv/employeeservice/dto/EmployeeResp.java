@@ -4,7 +4,9 @@ import com.rvv.employeeservice.model.Grade;
 import lombok.Data;
 
 @Data
-public class EmployeeRequestDto {
+public class EmployeeResp {
+
+    private Long id;
 
     private String name;
 

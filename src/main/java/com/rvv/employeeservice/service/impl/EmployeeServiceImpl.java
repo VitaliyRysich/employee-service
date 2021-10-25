@@ -1,6 +1,6 @@
 package com.rvv.employeeservice.service.impl;
 
-import com.rvv.employeeservice.dto.EmployeeRequestDto;
+import com.rvv.employeeservice.dto.EmployeeReq;
 import com.rvv.employeeservice.exception.EmployeeNotFoundException;
 import com.rvv.employeeservice.model.Employee;
 import com.rvv.employeeservice.model.Grade;
@@ -8,13 +8,15 @@ import com.rvv.employeeservice.operations.EmployeeSpecification;
 import com.rvv.employeeservice.repository.EmployeeRepository;
 import com.rvv.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.rvv.employeeservice.operations.EmployeeSearchCriteria.*;
+import static com.rvv.employeeservice.operations.EmployeeSearchCriteria.values;
 
 
 @Service
@@ -22,6 +24,7 @@ import static com.rvv.employeeservice.operations.EmployeeSearchCriteria.*;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public Employee findEmployeeById(Long id) {
@@ -38,22 +41,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee saveEmployee(Employee employee) {
+    public Employee saveEmployee(EmployeeReq employeeReq) {
+        var employee = new Employee();
+        modelMapper.map(employeeReq, employee);
         return employeeRepository.save(employee);
     }
 
     @Override
-    public Employee updateEmployee(Long id, EmployeeRequestDto employeeDto) {
+    public Employee updateEmployee(Long id, EmployeeReq employeeReq) {
         var employee = findEmployeeById(id);
-        employee.setName(employeeDto.getName());
-        employee.setSurname(employeeDto.getSurname());
-        employee.setGrade(employeeDto.getGrade());
-        employee.setSalary(employeeDto.getSalary());
+        modelMapper.map(employeeReq, employee);
         return employeeRepository.save(employee);
     }
 
     @Override
-    public List<Employee> findAllByRequestParams(Map<String, String> requestParams) {
+    public List<Employee> findAllByRequestParams(Map<String, String> requestParams, Pageable pageable) {
+        requestParams.remove("size");
+        requestParams.remove("page");
         var specification = new EmployeeSpecification();
 
         for (Map.Entry<String, String> param: requestParams.entrySet()) {
@@ -71,6 +75,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             specification.add(criteria);
         }
-        return employeeRepository.findAll(specification);
+        return employeeRepository.findAll(specification, pageable).toList();
     }
 }
